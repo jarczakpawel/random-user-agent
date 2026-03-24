@@ -32,7 +32,7 @@ jobs:
     steps:
       - uses: actions/checkout@v6
       - {uses: actions/setup-node@v4, with: {node-version-file: ./package.json, cache: 'npm'}}
-      - run: npm install
+      - run: npm ci
       - run: npm run test
 
   eslint:
@@ -41,7 +41,7 @@ jobs:
     steps:
       - uses: actions/checkout@v6
       - {uses: actions/setup-node@v4, with: {node-version-file: ./package.json, cache: 'npm'}}
-      - run: npm install
+      - run: npm ci
       - run: npm run lint
 
   build:
@@ -50,7 +50,7 @@ jobs:
     steps:
       - uses: actions/checkout@v6
       - {uses: actions/setup-node@v4, with: {node-version-file: ./package.json, cache: 'npm'}}
-      - run: npm install
+      - run: npm ci
       - run: npm run build
       - uses: actions/upload-artifact@v7
         with: {name: chrome.zip, path: ./dist/chrome.zip, if-no-files-found: error, retention-days: 30}
@@ -63,6 +63,6 @@ jobs:
     needs: [build]
     steps:
       - {uses: actions/download-artifact@v4, with: {name: firefox.zip, path: dist}}
-      - {uses: actions/setup-node@v4, with: {node-version: 21}}
+      - {uses: actions/setup-node@v4, with: {node-version-file: ./package.json}}
       - run: npm install -g addons-linter
       - run: addons-linter ./dist/firefox.zip

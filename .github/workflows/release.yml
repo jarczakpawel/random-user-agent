@@ -4,7 +4,7 @@
 name: 🚀 Release
 
 on:
-  release: # Docs: <https://help.github.com/en/articles/events-that-trigger-workflows#release-event-release>
+  release:
     types: [published]
 
 jobs:
@@ -15,7 +15,7 @@ jobs:
       - uses: actions/checkout@v6
       - {uses: gacts/github-slug@v1, id: slug}
       - {uses: actions/setup-node@v4, with: {node-version-file: ./package.json, cache: 'npm'}}
-      - run: npm install
+      - run: npm ci
       - run: >
           npm version --no-git-tag-version
           "${{ steps.slug.outputs.version-major }}.${{ steps.slug.outputs.version-minor }}.${{ steps.slug.outputs.version-patch }}"

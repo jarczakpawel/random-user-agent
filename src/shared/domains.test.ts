@@ -18,7 +18,7 @@ describe('domains', () => {
       '\t\r\nfO\t\r\n o  ': 'foo',
       '    ': '',
       '\r  \n \t  ': '',
-      '': '',
+      '': ''
     }).map(([give, want]) => {
       expect(canonizeDomain(give)).toBe(want)
     })
@@ -34,8 +34,7 @@ describe('domains', () => {
       '\t\r\nfO\t\r\n o  ': 'foo',
       '    ': '',
       '\r  \n \t  ': '',
-      '': '',
-      '': '',
+      '': ''
     }).map(([give, want]) => {
       expect(deCanonizeDomain(give)).toBe(want)
     })
@@ -68,7 +67,7 @@ describe('domains', () => {
         '33.3333.33.3.com',
         'localhost',
         '2001:db8:3333:4444:5555:6666:7777:8888',
-        '2001:db8:3333:4444:CCCC:DDDD:EEEE:FFFF',
+        '2001:db8:3333:4444:CCCC:DDDD:EEEE:FFFF'
       ]) {
         expect(validateDomainOrIP(domain), domain).toBe(true)
       }
@@ -106,7 +105,7 @@ describe('domains', () => {
         '255',
         '666.10.10.20',
         '33.3333.33.3',
-        '2001:db8:3333:4444:5555:6666:7777:8888:9999::',
+        '2001:db8:3333:4444:5555:6666:7777:8888:9999::'
       ]) {
         expect(validateDomainOrIP(domain), domain).toBe(false)
       }
