@@ -1,3 +1,15 @@
+@keyframes pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(125, 125, 125, 0.25);
+  }
+  70% {
+    box-shadow: 0 0 0 15px rgba(125, 125, 125, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(125, 125, 125, 0);
+  }
+}
+
 .primary {
   display: inline-block;
   cursor: pointer;
@@ -26,18 +38,6 @@
 
   &.pulse {
     animation: pulse 2s infinite;
-
-    @keyframes pulse {
-      0% {
-        box-shadow: 0 0 0 0 rgba(125, 125, 125, 0.25);
-      }
-      70% {
-        box-shadow: 0 0 0 15px rgba(125, 125, 125, 0);
-      }
-      100% {
-        box-shadow: 0 0 0 0 rgba(125, 125, 125, 0);
-      }
-    }
   }
 
   &:disabled {

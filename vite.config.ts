@@ -38,6 +38,17 @@ enum ProjectURLs {
   MICROSOFT = 'https://microsoftedge.microsoft.com/addons/detail/random-useragent-switch/addfjgllfhpnacoahmmcafmaacjloded',
 }
 
+const outputBanner = `
+/**
+ * Hey there! 👋 Nothing to hide from your scrutiny, right? 😆 This file is
+ * part of the Random User-Agent extension, essential for enhancing your
+ * anonymity online (not by much, but still).
+ *
+ * If you encounter any issues, please feel free to file a new issue here:
+ *
+ * \t${ProjectURLs.BUGREPORT}
+ */`.trim()
+
 /** Create _locales directory with messages.json files */
 const createLocalesPlugin: PluginOption = {
   name: 'create-locale-files',
@@ -82,9 +93,8 @@ const renameInjectFilePlugin: PluginOption = {
 const splitChromeAndFirefoxPlugin: PluginOption = {
   name: 'split-chrome-and-firefox',
   writeBundle: {
-    sequential: true, // https://rollupjs.org/plugin-development/#build-hooks
+    sequential: true,
     handler() {
-      // remove "./dist/firefox" directory
       rmSync(distFireFoxDir, { recursive: true, force: true })
       mkdirSync(distFireFoxDir, { recursive: true })
 
@@ -93,7 +103,7 @@ const splitChromeAndFirefoxPlugin: PluginOption = {
           .sort()
           .forEach((file) => {
             if (file.name === 'manifest.json') {
-              return // skip the manifest.json file
+              return
             }
 
             const fromPath = join(from, file.name)
@@ -109,7 +119,6 @@ const splitChromeAndFirefoxPlugin: PluginOption = {
           })
       }
 
-      // make a hardlinks of each file in "./dist/chrome" to "./dist/firefox" recursively
       mirror(distChromeDir, distFireFoxDir)
     },
   },
@@ -127,29 +136,21 @@ const copyAndModifyManifestPlugin: PluginOption = {
 
       for (const key in content) {
         if (key.startsWith('$')) {
-          delete content[key as keyof typeof content] // remove each key starting with `$` (e.g.: $schema, $docs, etc.)
+          delete content[key as keyof typeof content]
         }
       }
 
-      // set the version from package.json
       content.version = packageJson.version
-
-      // make injection file accessible from the content script
       content.web_accessible_resources = [{ resources: [`/${uniqueInjectFileName}.js`], matches: ['<all_urls>'] }]
 
-      // for chrome-based browsers
       writeFileSync(join(distChromeDir, 'manifest.json'), JSON.stringify(content), { flag: 'w' })
 
-      // for firefox
-      // https://extensionworkshop.com/documentation/develop/manifest-v3-migration-guide/
       writeFileSync(
         join(distFireFoxDir, 'manifest.json'),
         JSON.stringify({
           ...content,
-          // override background.service_worker with background.scripts
           background: { scripts: [content.background.service_worker], type: content.background.type },
           browser_specific_settings: {
-            // https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/API/declarativeNetRequest/updateDynamicRules
             gecko: { strict_min_version: '113.0', id: '{b43b974b-1d3a-4232-b226-eaa2ac6ebb69}' },
             gecko_android: { strict_min_version: '120.0' },
           },
@@ -173,11 +174,10 @@ const zipDistPlugin = (): PluginOption => {
       sequential: true,
       async handler() {
         if (config.command !== 'build' || process.argv.includes('--watch')) {
-          return // do nothing in dev/watch mode
+          return
         }
 
         {
-          // chrome
           const archive = archiver('zip', { zlib: { level: 9 } })
 
           archive.pipe(createWriteStream(resolve(distDir, 'chrome.zip')))
@@ -187,7 +187,6 @@ const zipDistPlugin = (): PluginOption => {
         }
 
         {
-          // firefox
           const archive = archiver('zip', { zlib: { level: 9 } })
 
           archive.pipe(createWriteStream(resolve(distDir, 'firefox.zip')))
@@ -200,7 +199,6 @@ const zipDistPlugin = (): PluginOption => {
   }
 }
 
-// https://vitejs.dev/config/
 export default defineConfig({
   plugins: [
     react(),
@@ -239,25 +237,13 @@ export default defineConfig({
         inject: join(entrypointDir, 'content', 'inject.ts'),
       },
       output: {
+        banner: outputBanner,
         entryFileNames: '[name].js',
         chunkFileNames: 'js/[name].js',
         assetFileNames: 'assets/[name].[ext]',
       },
     },
     sourcemap: process.argv.includes('--watch'),
-  },
-  esbuild: {
-    legalComments: 'none',
-    banner: `
-/**
- * Hey there! 👋 Nothing to hide from your scrutiny, right? 😆 This file is
- * part of the Random User-Agent extension, essential for enhancing your
- * anonymity online (not by much, but still).
- *
- * If you encounter any issues, please feel free to file a new issue here:
- *
- * \t${ProjectURLs.BUGREPORT}
- */`.trim(),
   },
   // @ts-ignore-next-line The `vite` type definitions are not up-to-date
   test: {

@@ -1,3 +1,18 @@
+@keyframes blinkingBackground {
+  0% {
+    background-color: transparent;
+  }
+  30% {
+    background-color: rgba(87, 222, 114, 0.2);
+  }
+  50% {
+    background-color: rgba(87, 222, 114, 0.25);
+  }
+  100% {
+    background-color: transparent;
+  }
+}
+
 .action {
   display: flex;
   align-items: center;
@@ -5,7 +20,7 @@
   color: var(--color-text-primary);
   cursor: pointer;
   transition: background-color 120ms ease-in-out;
-  font-size: 1.2em; /* scale up a bit */
+  font-size: 1.2em;
 
   .icon {
     display: flex;
@@ -21,21 +36,6 @@
   &.blinkingBackground {
     animation: blinkingBackground 2s infinite;
     text-shadow: 0 0 4px var(--color-bg-primary);
-
-    @keyframes blinkingBackground {
-      0% {
-        background-color: transparent;
-      }
-      30% {
-        background-color: rgba(87, 222, 114, 0.2);
-      }
-      50% {
-        background-color: rgba(87, 222, 114, 0.25);
-      }
-      100% {
-        background-color: transparent;
-      }
-    }
   }
 
   &:hover,
